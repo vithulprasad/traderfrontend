@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217 91% 60%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 217 33% 17%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+
+    --radius: 0.75rem;
+
+    /* Trading specific colors */
+    --profit: 142 71% 45%;
+    --profit-foreground: 142 71% 95%;
+    --profit-glow: 142 71% 45%;
+    
+    --loss: 0 84% 60%;
+    --loss-foreground: 0 84% 95%;
+    --loss-glow: 0 84% 60%;
+
+    /* Chart colors */
+    --chart-up: 142 71% 45%;
+    --chart-down: 0 84% 60%;
+    --chart-grid: 217 33% 15%;
+    --chart-text: 215 20% 55%;
+
+    /* Gradients */
+    --gradient-dark: linear-gradient(180deg, hsl(222 47% 8%) 0%, hsl(222 47% 4%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(222 47% 10%) 0%, hsl(222 47% 6%) 100%);
+    --gradient-profit: linear-gradient(135deg, hsl(142 71% 45% / 0.2) 0%, hsl(142 71% 45% / 0.05) 100%);
+    --gradient-loss: linear-gradient(135deg, hsl(0 84% 60% / 0.2) 0%, hsl(0 84% 60% / 0.05) 100%);
+
+    /* Shadows */
+    --shadow-glow-profit: 0 0 30px hsl(142 71% 45% / 0.3);
+    --shadow-glow-loss: 0 0 30px hsl(0 84% 60% / 0.3);
+    --shadow-card: 0 4px 24px hsl(222 47% 2% / 0.5);
+
+    /* Fonts */
+    --font-display: 'Outfit', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-display);
+    background: var(--gradient-dark);
+    min-height: 100vh;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+@layer utilities {
+  .glow-profit {
+    box-shadow: var(--shadow-glow-profit);
+  }
+
+  .glow-loss {
+    box-shadow: var(--shadow-glow-loss);
+  }
+
+  .gradient-card {
+    background: var(--gradient-card);
+  }
+
+  .gradient-profit {
+    background: var(--gradient-profit);
+  }
+
+  .gradient-loss {
+    background: var(--gradient-loss);
+  }
+
+  .text-profit {
+    color: hsl(var(--profit));
+  }
+
+  .text-loss {
+    color: hsl(var(--loss));
+  }
+
+  .bg-profit {
+    background-color: hsl(var(--profit));
+  }
+
+  .bg-loss {
+    background-color: hsl(var(--loss));
+  }
+}
