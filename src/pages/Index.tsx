@@ -3,6 +3,8 @@ import { io } from "socket.io-client";
 import { Activity } from "lucide-react";
 import TradeStats from "@/components/TradeStats";
 import CandlestickChart from "@/components/CandlestickChart";
+import SignalStrength from "@/components/SignalStrength";
+import {broadcastTradeDetails} from '../Api/apis.js'
 import VolumeChart from "@/components/VolumeChart";
 
 // --- Type Definitions ---
@@ -34,7 +36,7 @@ interface PendingOrder {
   currentStatus: "PENDING" | "OPEN" | "CLOSED" | "CANCELLED";
   tradeStatus: "WIN" | "LOSS" | "RUNNING" | "BREAKEVEN";
   signalType: string; // EMA, RSI, MACD, etc.
-  entryTime: string;  // ISO string or timestamp
+  entryTime: string; // ISO string or timestamp
 }
 
 // This should match the structure of the data emitted from your server
@@ -61,16 +63,15 @@ const Index = () => {
     totalLose: 0,
   });
   const [chartData, setChartData] = useState<ChartData[]>([]);
-
+  const [live_price, set_live_price] = useState(0);
   const storeLast10 = (data: ChartData) => {
     setChartData((prev) => [...prev.slice(-30), data]);
   };
 
   useEffect(() => {
     // Connect to your Socket.IO server
-    // const socket = io("http://localhost:5000"); // <-- IMPORTANT: Change to your server URL
-    const socket = io("https://tradebackend-rd9x.onrender.com"); // <-- IMPORTANT: Change to your server URL
-
+    const socket = io("http://localhost:5000"); // <-- IMPORTANT: Change to your server URL
+    // const socket = io("https://tradebackend-rd9x.onrender.com"); // <-- IMPORTANT: Change to your server URL
 
     socket.on("connect", () => {
       console.log("✅ Connected to WebSocket server");
@@ -104,12 +105,9 @@ const Index = () => {
       storeLast10(formattedData);
     });
 
-    socket.on("tradeUpdate", (data: SocketData) => {
-      setStats({
-        totalTrades: data.totalTrades,
-        winningTrades: data.winningTrades,
-        losingTrades: data.losingTrades,
-      });
+    socket.on("binance_price", (data: number) => {
+      console.log("live price");
+      set_live_price(data);
     });
     socket.on("disconnect", () => {
       console.log("❌ Disconnected from WebSocket server");
@@ -124,32 +122,63 @@ const Index = () => {
   const latestDataPoint =
     chartData.length > 0 ? chartData[chartData.length - 1] : null;
 
+  const getLive = async () => {
+    const res = await broadcastTradeDetails()
+    const data = await res.json();
+
+    setStats({
+      totalTrades: data?.totalTrades ?? null,
+      winningTrades: data?.winningTrades ?? null,
+      losingTrades: data?.losingTrades ?? null,
+      winRate: data?.winRate ?? null,
+      most_buy_direction: data?.most_buy_direction ?? null,
+      most_sell_direction: data?.most_sell_direction ?? null,
+      pending_orders: data?.pending_orders ?? null,
+      totalLose: data?.totalLose ?? null,
+    });
+  };
+
   return (
     <div className="min-h-screen">
       {/* Header */}
       <header className="border-b border-border px-6 py-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
-              <Activity className="w-5 h-5 text-primary" />
-            </div>
+            <button
+              onClick={() => {
+                getLive();
+              }}
+              className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"
+            >
+              <svg
+                width="30"
+                height="30"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3.00024 13.0225C8.18522 12.2429 11.7559 15.8146 10.9774 20.9996M3.00024 8.03784C10.938 7.25824 16.7417 13.0619 15.9621 20.9997M3.00024 3.05212C13.6919 2.27364 21.7264 10.3082 20.948 20.9998M5 21C3.89566 21 3 20.1043 3 19C3 17.8957 3.89566 17 5 17C6.10434 17 7 17.8957 7 19C7 20.1043 6.10434 21 5 21Z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </button>
             <div>
               <h1 className="text-xl font-semibold text-foreground">
-                Trading Dashboard
+                Vidhul TRADE
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Real-time market analysis
-              </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">BTC/USD</span>
-            {latestDataPoint && (
-              <span className="font-mono text-lg font-semibold text-profit">
-                ${latestDataPoint.close.toLocaleString()}
-              </span>
-            )}
+            <span className="text-sm text-muted-foreground">BTC</span>
+
+            <span className="font-mono text-lg font-semibold text-profit">
+              ${live_price}
+            </span>
           </div>
         </div>
       </header>
@@ -165,13 +194,16 @@ const Index = () => {
           most_buy_direction={stats.most_buy_direction}
           most_sell_direction={stats.most_sell_direction}
           pending_orders={stats.pending_orders}
-          totalLose={stats.totalLose}                 
+          totalLose={stats.totalLose}
         />
         {/* Charts */}
-        <div className="space-y-6">
+        <div>
+          <SignalStrength/>
+        </div>
+        {/* <div className="space-y-6">
           <CandlestickChart data={chartData} />
           <VolumeChart data={chartData} />
-        </div>
+        </div> */}
       </main>
     </div>
   );

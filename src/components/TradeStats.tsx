@@ -97,7 +97,7 @@ const TradeStats = ({
         </div>
         <p
           className={`text-3xl font-bold font-mono animate-count-up ${
-            parseFloat(winRate.toString()) >= 50 ? "text-profit" : "text-loss"
+            winRate >= 50 ? "text-profit" : "text-loss"
           }`}
         >
           {winRate}%
