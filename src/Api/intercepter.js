@@ -10,6 +10,16 @@ const api = axios.create({
 });
 
 
+
+// const api = axios.create({
+//   baseURL: 'http://localhost:5000', // Replace with your actual Backend URL
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   withCredentials: true, // Enable if you need to send cookies/sessions
+// });
+
+
 api.interceptors.response.use(
   (response) => {
     return response;

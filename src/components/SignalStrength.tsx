@@ -7,6 +7,7 @@ interface SignalDetail {
   signalTime: string;
   price: number;
   strength: string;
+  signal: string;
 }
 
 interface Pagination {
@@ -44,15 +45,27 @@ function SignalStrength({ liveSignal }: Props) {
 
   /* ---------------- FETCH DATA ---------------- */
   const fetchSignals = async () => {
+    const strength = "";
+    const price = 0;
     setLoading(true);
     try {
       const res = await getSignalDetails({
-        page,
-        limit,
-        direction,
         startDate,
         endDate,
+        strength,
+        price,
+        page,
+        limit,
+        direction
       });
+    // startDate:string;
+    // endDate:string;
+    // strength:string,
+    // price:number;
+    // page:number;
+    // limit:number;
+    // direction:string;
+
 
       const response: ApiResponse = res.data;
 
@@ -125,7 +138,9 @@ function SignalStrength({ liveSignal }: Props) {
               </th>
 
               <th className="px-6 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider text-center">
-                Filters
+                <button onClick={()=>{
+                  fetchSignals()
+                }}> Refresh</button>
               </th>
             </tr>
 
@@ -150,11 +165,11 @@ function SignalStrength({ liveSignal }: Props) {
                 <tr key={signal._id} className="border-b border-slate-700 hover:bg-slate-800 transition-colors duration-150">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                      signal.direction === 'BUY' 
+                      signal.signal === 'BUY' 
                         ? 'bg-green-900/30 text-green-400 border border-green-800' 
                         : 'bg-red-900/30 text-red-400 border border-red-800'
                     }`}>
-                      {signal.direction}
+                      {signal.signal}
                     </span>
                   </td>
                   <td className="px-6 py-4">
