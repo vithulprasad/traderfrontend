@@ -141,50 +141,57 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="border-b border-border px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => {
-                getLive();
-              }}
-              className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center"
-            >
-              <svg
-                width="30"
-                height="30"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M3.00024 13.0225C8.18522 12.2429 11.7559 15.8146 10.9774 20.9996M3.00024 8.03784C10.938 7.25824 16.7417 13.0619 15.9621 20.9997M3.00024 3.05212C13.6919 2.27364 21.7264 10.3082 20.948 20.9998M5 21C3.89566 21 3 20.1043 3 19C3 17.8957 3.89566 17 5 17C6.10434 17 7 17.8957 7 19C7 20.1043 6.10434 21 5 21Z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </button>
-            <div>
-              <h1 className="text-xl font-semibold text-foreground">
-                Vidhul TRADE
-              </h1>
-            </div>
-          </div>
+<header className="bg-black border-b border-gray-800 px-4 py-3 sticky top-0 z-50">
+  <div className="flex items-center justify-between">
+    {/* Left: Logo & Brand */}
+    <div className="flex items-center gap-2">
+      <button
+        onClick={() => getLive()}
+        className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/10 
+                 border border-blue-500/30 flex items-center justify-center
+                 active:scale-95 transition-transform"
+      >
+        <img 
+          width={20}
+          height={20}
+          className="rounded"
+          src="https://i.pinimg.com/736x/1b/5b/9a/1b5b9a435c589b2147e0c4e1ce7759b0.jpg" 
+          alt="Logo" 
+        />
+      </button>
+      
+      <div>
+        <h1 className="text-lg font-bold text-white">VIDHUL TRADE</h1>
+        <p className="text-xs text-gray-400">Live Trading</p>
+      </div>
+    </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">BTC</span>
-
-            <span className="font-mono text-lg font-semibold text-profit">
-              ${live_price}
-            </span>
-          </div>
+    {/* Right: BTC Price */}
+    <div className="flex flex-col items-end">
+      <div className="flex items-center gap-2 mb-1">
+        <div className="w-6 h-6 rounded-full bg-yellow-500/20 flex items-center justify-center">
+          <span className="text-xs font-bold text-yellow-400">₿</span>
         </div>
-      </header>
+        <span className="text-sm text-gray-300">BTC</span>
+      </div>
+          <button
+      onClick={() => getLive()}
+      className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+    >
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+      </svg>
+      Refresh
+    </button>
+
+    </div>
+  </div>
+
+
+</header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-2 py-2">              
         {/* Trade Statistics */}
         <TradeStats
           totalTrades={stats.totalTrades}

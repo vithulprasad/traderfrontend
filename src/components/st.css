@@ -1,0 +1,110 @@
+/* st.css */
+@keyframes glow-green {
+  0%, 100% {
+    box-shadow: 0 0 2px rgba(34, 197, 94, 0.4), inset 0 0 2px rgba(34, 197, 94, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(34, 197, 94, 0.6), inset 0 0 4px rgba(34, 197, 94, 0.3);
+  }
+}
+
+@keyframes glow-red {
+  0%, 100% {
+    box-shadow: 0 0 2px rgba(239, 68, 68, 0.4), inset 0 0 2px rgba(239, 68, 68, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6), inset 0 0 4px rgba(239, 68, 68, 0.3);
+  }
+}
+
+@keyframes glow-amber {
+  0%, 100% {
+    box-shadow: 0 0 2px rgba(245, 158, 11, 0.4), inset 0 0 2px rgba(245, 158, 11, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6), inset 0 0 4px rgba(245, 158, 11, 0.3);
+  }
+}
+
+.glow-green {
+  animation: glow-green 2s ease-in-out infinite;
+}
+
+.glow-red {
+  animation: glow-red 2s ease-in-out infinite;
+}
+
+.glow-amber {
+  animation: glow-amber 2s ease-in-out infinite;
+}
+
+/* Transparent glass effect */
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 200ms;
+}
+
+/* Hover effects */
+.hover\:scale-\[1\.02\]:hover {
+  transform: scale(1.02);
+}
+
+/* Ensure 3 boxes per row on all screens */
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* Optimize for very small screens (< 360px) */
+@media (max-width: 360px) {
+  .p-3 {
+    padding: 0.5rem;
+  }
+  
+  .gap-2 {
+    gap: 0.25rem;
+  }
+  
+  .text-lg {
+    font-size: 0.875rem; /* 14px */
+  }
+  
+  .text-sm {
+    font-size: 0.75rem; /* 12px */
+  }
+  
+  .text-xs {
+    font-size: 0.625rem; /* 10px */
+  }
+  
+  .text-\[10px\] {
+    font-size: 0.5rem; /* 8px */
+  }
+  
+  .text-\[9px\] {
+    font-size: 0.5rem; /* 8px */
+  }
+  
+  .w-3\.5, .h-3\.5 {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+/* Ensure proper scaling for all screen sizes */
+.grid {
+  display: grid;
+}
+
+/* Make pending order card span 2 columns on mobile */
+@media (max-width: 640px) {
+  .col-span-2 {
+    grid-column: span 2 / span 2;
+  }
+}
