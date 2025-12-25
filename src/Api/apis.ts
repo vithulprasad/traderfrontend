@@ -22,3 +22,9 @@ export const broadcastTradeDetails = async () => {
 };
 
 
+export const getTradeDetails = async (details) => {
+  const response = await api.get(`/get_trade_details`,{
+    params:details
+  });
+  return response;
+};

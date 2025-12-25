@@ -1,90 +1,82 @@
 import React, { useEffect, useState } from "react";
-import { getSignalDetails } from "../Api/apis";
+import { getTradeDetails } from "../Api/apis";
 
-interface SignalDetail {
+interface Trade {
   _id: string;
+  entryPrice: number;
+  exitPrice: number | null;
   direction: string;
-  signalTime: string;
-  price: number;
-  strength: string;
-  signal: string;
+  stopLoss: number;
+  target: number;
+  tradedQuantity: number;
+  currentStatus: string;
+  tradeStatus: string;
+  profitLoss: number;
+  entryTime: string;
+  exitTime: string | null;
 }
 
 interface Pagination {
   totalPages: number;
+  currentPage: number;
 }
 
 interface ApiResponse {
-  data: SignalDetail[];
+  data: Trade[];
   pagination: Pagination;
 }
 
-interface Props {
-  liveSignal?: SignalDetail;
-}
-
-const strengthColorMap: { [key: string]: string } = {
-  strong: "text-[#00ff00]",
-  medium: "text-[#ffff00]",
-  weak: "text-[#ff3333]",
+const statusColorMap: Record<string, string> = {
+  WINNER: "text-[#00ff00]",
+  LOSER: "text-[#ff3333]",
+  OPEN: "text-[#ffff00]",
 };
 
-const strengthBgMap: { [key: string]: string } = {
-  strong: "bg-[#00ff00]/10 border-l-4 border-[#00ff00]",
-  medium: "bg-[#ffff00]/10 border-l-4 border-[#ffff00]",
-  weak: "bg-[#ff3333]/10 border-l-4 border-[#ff3333]",
+const statusBgMap: Record<string, string> = {
+  WINNER: "bg-[#00ff00]/10 border-l-4 border-[#00ff00]",
+  LOSER: "bg-[#ff3333]/10 border-l-4 border-[#ff3333]",
+  OPEN: "bg-[#ffff00]/10 border-l-4 border-[#ffff00]",
 };
 
-function SignalStrength({ liveSignal }: Props) {
-  const [signals, setSignals] = useState<SignalDetail[]>([]);
+function TradeHistory() {
+  const [trades, setTrades] = useState<Trade[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Pagination
+  // Pagination
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const limit = 10;
 
-  // 🔹 Filters
+  // Filters
   const [direction, setDirection] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   /* ---------------- FETCH DATA ---------------- */
-  const fetchSignals = async () => {
-    const strength = "";
-    const price = 0;
+  const fetchTrades = async () => {
     setLoading(true);
     try {
-      const res = await getSignalDetails({
-        startDate,
-        endDate,
-        strength,
-        price,
+      const res = await getTradeDetails({
         page,
         limit,
-        direction
+        direction,
+        startDate,
+        endDate,
       });
 
       const response: ApiResponse = res.data;
-      setSignals(response.data);
+      setTrades(response.data);
       setTotalPages(response.pagination.totalPages);
     } catch (error) {
-      console.error("Fetch failed", error);
+      console.error("Failed to fetch trades", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchSignals();
+    fetchTrades();
   }, [page, direction, startDate, endDate]);
-
-  /* ---------------- LIVE SIGNAL PUSH ---------------- */
-  useEffect(() => {
-    if (liveSignal) {
-      setSignals((prev) => [liveSignal, ...prev.slice(0, limit - 1)]);
-    }
-  }, [liveSignal]);
 
   const resetFilters = () => {
     setDirection("");
@@ -93,27 +85,34 @@ function SignalStrength({ liveSignal }: Props) {
     setPage(1);
   };
 
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(value);
+  };
+
   if (loading) {
     return (
       <div className="min-h-[400px] flex items-center justify-center bg-black">
         <div className="text-center">
           <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#ff3333] border-r-transparent"></div>
-          <p className="mt-3 text-slate-400">Loading signals...</p>
+          <p className="mt-3 text-slate-400">Loading trades...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-transparent border border-[#333] shadow-lg">
+    <div className="bg-black border border-[#333] shadow-lg">
       {/* ---------------- HEADER ---------------- */}
       <div className="border-b border-[#333] bg-[#111] p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <h2 className="text-xl font-bold text-white">Signal Strength</h2>
+          <h2 className="text-xl font-bold text-white">Trade History</h2>
           
           <div className="flex flex-wrap gap-2">
             <button
-              onClick={fetchSignals}
+              onClick={fetchTrades}
               className="px-4 py-2 bg-[#222] text-white text-sm font-medium border border-[#333] hover:bg-[#2a2a2a] active:scale-95 transition-all"
             >
               Refresh
@@ -140,8 +139,8 @@ function SignalStrength({ liveSignal }: Props) {
               className="w-full bg-[#111] border border-[#333] text-white text-sm px-3 py-2 focus:outline-none focus:border-[#ff3333]"
             >
               <option value="">All Directions</option>
-              <option value="BUY">BUY</option>
-              <option value="SELL">SELL</option>
+              <option value="LONG">LONG</option>
+              <option value="SHORT">SHORT</option>
             </select>
           </div>
 
@@ -179,48 +178,77 @@ function SignalStrength({ liveSignal }: Props) {
           <thead className="bg-[#111] border-b border-[#333]">
             <tr className="text-sm text-slate-400 uppercase tracking-wider">
               <th className="text-left p-4 font-semibold">Direction</th>
-              <th className="text-left p-4 font-semibold">Time</th>
-              <th className="text-left p-4 font-semibold">Price</th>
-              <th className="text-left p-4 font-semibold">Strength</th>
+              <th className="text-left p-4 font-semibold">Entry Time</th>
+              <th className="text-left p-4 font-semibold">Exit Time</th>
+              <th className="text-left p-4 font-semibold">Entry</th>
+              <th className="text-left p-4 font-semibold">Exit</th>
+              <th className="text-left p-4 font-semibold">P/L</th>
+              <th className="text-left p-4 font-semibold">Status</th>
             </tr>
           </thead>
 
           <tbody>
-            {signals.length === 0 ? (
+            {trades.length === 0 ? (
               <tr>
-                <td colSpan={4} className="text-center p-8 text-slate-500">
+                <td colSpan={7} className="text-center p-8 text-slate-500">
                   No records found
                 </td>
               </tr>
             ) : (
-              signals.map((signal) => (
+              trades.map((trade) => (
                 <tr 
-                  key={signal._id} 
-                  className={`border-b border-[#222] hover:bg-[#111] transition-colors ${strengthBgMap[signal.strength]}`}
+                  key={trade._id} 
+                  className={`border-b border-[#222] hover:bg-[#111] transition-colors ${statusBgMap[trade.tradeStatus]}`}
                 >
                   <td className="p-4">
                     <span className={`inline-block px-3 py-1 text-sm font-bold ${
-                      signal.signal === 'BUY' 
-                        ? 'bg-[#00ff00]/20 text-[#00ff00] border border-[#00ff00]/30' 
+                      trade.direction === 'LONG'
+                        ? 'bg-[#00ff00]/20 text-[#00ff00] border border-[#00ff00]/30'
                         : 'bg-[#ff3333]/20 text-[#ff3333] border border-[#ff3333]/30'
                     }`}>
-                      {signal.signal}
+                      {trade.direction}
                     </span>
                   </td>
+
                   <td className="p-4 text-slate-300 text-sm">
                     <div className="font-medium">
-                      {new Date(signal.signalTime).toLocaleDateString()}
+                      {new Date(trade.entryTime).toLocaleDateString()}
                     </div>
                     <div className="text-xs text-slate-500">
-                      {new Date(signal.signalTime).toLocaleTimeString()}
+                      {new Date(trade.entryTime).toLocaleTimeString()}
                     </div>
                   </td>
-                  <td className="p-4 font-bold text-white text-lg">
-                    {signal.price.toFixed(2)}
+
+                  <td className="p-4 text-slate-300 text-sm">
+                    {trade.exitTime ? (
+                      <>
+                        <div className="font-medium">
+                          {new Date(trade.exitTime).toLocaleDateString()}
+                        </div>
+                        <div className="text-xs text-slate-500">
+                          {new Date(trade.exitTime).toLocaleTimeString()}
+                        </div>
+                      </>
+                    ) : (
+                      <span className="text-slate-500">-</span>
+                    )}
                   </td>
+
+                  <td className="p-4 font-bold text-white">
+                    {formatCurrency(trade.entryPrice)}
+                  </td>
+
+                  <td className="p-4 font-bold text-white">
+                    {trade.exitPrice ? formatCurrency(trade.exitPrice) : '-'}
+                  </td>
+
+                  <td className={`p-4 font-bold ${trade.profitLoss >= 0 ? 'text-[#00ff00]' : 'text-[#ff3333]'}`}>
+                    {trade.profitLoss ? (trade.profitLoss >= 0 ? '+' : '') + formatCurrency(trade.profitLoss) : '-'}
+                  </td>
+
                   <td className="p-4">
-                    <div className={`text-sm font-bold ${strengthColorMap[signal.strength]}`}>
-                      {signal.strength.toUpperCase()}
+                    <div className={`text-sm font-bold ${statusColorMap[trade.tradeStatus]}`}>
+                      {trade.tradeStatus}
                     </div>
                   </td>
                 </tr>
@@ -256,6 +284,6 @@ function SignalStrength({ liveSignal }: Props) {
       </div>
     </div>
   );
-} 
+}
 
-export default SignalStrength;
+export default TradeHistory;

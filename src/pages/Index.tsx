@@ -4,9 +4,9 @@ import { Activity } from "lucide-react";
 import TradeStats from "@/components/TradeStats";
 import CandlestickChart from "@/components/CandlestickChart";
 import SignalStrength from "@/components/SignalStrength";
-import {broadcastTradeDetails} from '../Api/apis.js'
+import { broadcastTradeDetails } from "../Api/apis.js";
 import VolumeChart from "@/components/VolumeChart";
-
+import Trade from "@/components/Trade";
 // --- Type Definitions ---
 interface ChartData {
   time: string;
@@ -70,8 +70,8 @@ const Index = () => {
 
   useEffect(() => {
     // Connect to your Socket.IO server
-    const socket = io("http://localhost:5000"); // <-- IMPORTANT: Change to your server URL
-    // const socket = io("https://tradebackend-rd9x.onrender.com"); // <-- IMPORTANT: Change to your server URL
+    // const socket = io("http://localhost:5000"); // <-- IMPORTANT: Change to your server URL
+    const socket = io("https://tradebackend-rd9x.onrender.com"); // <-- IMPORTANT: Change to your server URL
 
     socket.on("connect", () => {
       console.log("✅ Connected to WebSocket server");
@@ -123,7 +123,7 @@ const Index = () => {
     chartData.length > 0 ? chartData[chartData.length - 1] : null;
 
   const getLive = async () => {
-    const res = await broadcastTradeDetails()
+    const res = await broadcastTradeDetails();
     const data = await res.json();
 
     setStats({
@@ -197,8 +197,12 @@ const Index = () => {
           totalLose={stats.totalLose}
         />
         {/* Charts */}
-        <div>
-          <SignalStrength/>
+        <div className="my-2">
+          <SignalStrength />
+        </div>
+
+        <div className="my-2">
+          <Trade />
         </div>
         {/* <div className="space-y-6">
           <CandlestickChart data={chartData} />
