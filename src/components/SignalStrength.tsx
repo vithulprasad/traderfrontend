@@ -154,7 +154,7 @@ function SignalStrength({ liveSignal }: Props) {
                 setPage(1);
                 setStartDate(e.target.value);
               }}
-              className="w-[80%] bg-[#111] border border-[#333] text-white text-sm px-3 py-2 focus:outline-none focus:border-[#00ff00]"
+              className="w-[95%] bg-[#111] border border-[#333] text-white text-sm px-3 py-2 focus:outline-none focus:border-[#00ff00]"
             />
           </div>
 
@@ -167,7 +167,7 @@ function SignalStrength({ liveSignal }: Props) {
                 setPage(1);
                 setEndDate(e.target.value);
               }}
-              className="w-[80%] bg-[#111] border border-[#333] text-white text-sm px-3 py-2 focus:outline-none focus:border-[#00ff00]"
+              className="w-[95%] bg-[#111] border border-[#333] text-white text-sm px-3 py-2 focus:outline-none focus:border-[#00ff00]"
             />
           </div>
         </div>
