@@ -144,7 +144,7 @@ function SignalStrength({ liveSignal }: Props) {
             >
               <option value="">All Directions</option>
               <option value="BUY">BUY</option>
-              <option value="SELL">SELL</option>
+              <option value="NEUTRAL">SELL</option>
             </select>
           </div>
 
