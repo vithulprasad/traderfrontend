@@ -12,6 +12,7 @@ interface SignalDetail {
 
 interface Pagination {
   totalPages: number;
+  totalRecords: number;
 }
 
 interface ApiResponse {
@@ -42,6 +43,7 @@ function SignalStrength({ liveSignal }: Props) {
   // 🔹 Pagination
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [count,setCount] = useState(0)
   const limit = 10;
 
   // 🔹 Filters
@@ -68,6 +70,7 @@ function SignalStrength({ liveSignal }: Props) {
       const response: ApiResponse = res.data;
       setSignals(response.data);
       setTotalPages(response.pagination.totalPages);
+      setCount(response.pagination.totalRecords)
     } catch (error) {
       console.error("Fetch failed", error);
     } finally {
@@ -232,8 +235,13 @@ function SignalStrength({ liveSignal }: Props) {
 
       {/* ---------------- PAGINATION ---------------- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#111] border-t border-[#333]">
-        <div className="text-sm text-slate-400">
-          Page <span className="font-bold text-white">{page}</span> of <span className="font-bold text-white">{totalPages}</span>
+        <div className="text-sm text-slate-400 flex justify-between">
+          <div>
+  Page <span className="font-bold text-white">{page}</span> of <span className="font-bold text-white">{totalPages}</span>
+          </div>
+        <div>
+            Total Records :<span className="font-bold text-white">{count}</span>
+        </div>
         </div>
         
         <div className="flex gap-2">

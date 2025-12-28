@@ -19,6 +19,7 @@ interface Trade {
 interface Pagination {
   totalPages: number;
   currentPage: number;
+  totalRecords: number;
 }
 
 interface ApiResponse {
@@ -45,6 +46,7 @@ function TradeHistory() {
   // Pagination
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [count, setCount] = useState(0)
   const limit = 10;
 
   // Filters
@@ -67,6 +69,7 @@ function TradeHistory() {
       const response: ApiResponse = res.data;
       setTrades(response.data);
       setTotalPages(response.pagination.totalPages);
+      setCount(response.pagination.totalRecords)
     } catch (error) {
       console.error("Failed to fetch trades", error);
     } finally {
@@ -86,9 +89,9 @@ function TradeHistory() {
   };
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     }).format(value);
   };
 
@@ -109,7 +112,7 @@ function TradeHistory() {
       <div className="border-b border-[#333] bg-[#111] p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <h2 className="text-xl font-bold text-white">Trade History</h2>
-          
+
           <div className="flex flex-wrap gap-2">
             <button
               onClick={fetchTrades}
@@ -129,7 +132,9 @@ function TradeHistory() {
         {/* ---------------- FILTERS ---------------- */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
           <div>
-            <label className="block text-xs text-slate-400 mb-2">Direction</label>
+            <label className="block text-xs text-slate-400 mb-2">
+              Direction
+            </label>
             <select
               value={direction}
               onChange={(e) => {
@@ -145,7 +150,9 @@ function TradeHistory() {
           </div>
 
           <div>
-            <label className="block text-xs text-slate-400 mb-2">From Date</label>
+            <label className="block text-xs text-slate-400 mb-2">
+              From Date
+            </label>
             <input
               type="date"
               value={startDate}
@@ -196,16 +203,20 @@ function TradeHistory() {
               </tr>
             ) : (
               trades.map((trade) => (
-                <tr 
-                  key={trade._id} 
-                  className={`border-b border-[#222] hover:bg-[#111] transition-colors ${statusBgMap[trade.tradeStatus]}`}
+                <tr
+                  key={trade._id}
+                  className={`border-b border-[#222] hover:bg-[#111] transition-colors ${
+                    statusBgMap[trade.tradeStatus]
+                  }`}
                 >
                   <td className="p-4">
-                    <span className={`inline-block px-3 py-1 text-sm font-bold ${
-                      trade.direction === 'LONG'
-                        ? 'bg-[#00ff00]/20 text-[#00ff00] border border-[#00ff00]/30'
-                        : 'bg-[#ff3333]/20 text-[#ff3333] border border-[#ff3333]/30'
-                    }`}>
+                    <span
+                      className={`inline-block px-3 py-1 text-sm font-bold ${
+                        trade.direction === "LONG"
+                          ? "bg-[#00ff00]/20 text-[#00ff00] border border-[#00ff00]/30"
+                          : "bg-[#ff3333]/20 text-[#ff3333] border border-[#ff3333]/30"
+                      }`}
+                    >
                       {trade.direction}
                     </span>
                   </td>
@@ -239,15 +250,28 @@ function TradeHistory() {
                   </td>
 
                   <td className="p-4 font-bold text-white">
-                    {trade.exitPrice ? formatCurrency(trade.exitPrice) : '-'}
+                    {trade.exitPrice ? formatCurrency(trade.exitPrice) : "-"}
                   </td>
 
-                  <td className={`p-4 font-bold ${trade.profitLoss >= 0 ? 'text-[#00ff00]' : 'text-[#ff3333]'}`}>
-                    {trade.profitLoss ? (trade.profitLoss >= 0 ? '+' : '') + formatCurrency(trade.profitLoss) : '-'}
+                  <td
+                    className={`p-4 font-bold ${
+                      trade.profitLoss >= 0
+                        ? "text-[#00ff00]"
+                        : "text-[#ff3333]"
+                    }`}
+                  >
+                    {trade.profitLoss
+                      ? (trade.profitLoss >= 0 ? "+" : "") +
+                        formatCurrency(trade.profitLoss)
+                      : "-"}
                   </td>
 
                   <td className="p-4">
-                    <div className={`text-sm font-bold ${statusColorMap[trade.tradeStatus]}`}>
+                    <div
+                      className={`text-sm font-bold ${
+                        statusColorMap[trade.tradeStatus]
+                      }`}
+                    >
                       {trade.tradeStatus}
                     </div>
                   </td>
@@ -260,10 +284,16 @@ function TradeHistory() {
 
       {/* ---------------- PAGINATION ---------------- */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-[#111] border-t border-[#333]">
-        <div className="text-sm text-slate-400">
-          Page <span className="font-bold text-white">{page}</span> of <span className="font-bold text-white">{totalPages}</span>
+        <div className="text-sm text-slate-400 flex justify-between">
+          <div>
+            Page <span className="font-bold text-white">{page}</span> of{" "}
+            <span className="font-bold text-white">{totalPages}</span>
+          </div>
+          <div>
+            Total Records :<span className="font-bold text-white">{count}</span>
+          </div>
         </div>
-        
+
         <div className="flex gap-2">
           <button
             disabled={page === 1}
